@@ -1,1 +1,1 @@
-print("Scanner Started")
+print("Pair Trading Scanner Started...")
