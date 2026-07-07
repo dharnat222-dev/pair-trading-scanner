@@ -134,3 +134,38 @@ pd.DataFrame(
 ).to_csv("hedge_pairs.csv", index=False)
 
 print("hedge_pairs.csv created")
+print("\nCalculating Z-Score...")
+
+zscore_pairs = []
+
+for s1, s2, corr, pvalue, beta in hedge_pairs:
+
+    spread = prices[s1] - beta * prices[s2]
+
+    mean = spread.mean()
+    std = spread.std()
+
+    z = (spread.iloc[-1] - mean) / std
+
+    zscore_pairs.append([
+        s1,
+        s2,
+        round(corr,4),
+        round(pvalue,6),
+        round(beta,4),
+        round(z,2)
+    ])
+
+pd.DataFrame(
+    zscore_pairs,
+    columns=[
+        "Stock1",
+        "Stock2",
+        "Correlation",
+        "PValue",
+        "HedgeRatio",
+        "ZScore"
+    ]
+).to_csv("zscore_pairs.csv", index=False)
+
+print("zscore_pairs.csv created")
