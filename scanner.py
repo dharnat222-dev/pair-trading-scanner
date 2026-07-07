@@ -1,3 +1,4 @@
+from result_filter import has_upcoming_result
 import yfinance as yf
 import pandas as pd
 from sector_map import SECTOR
@@ -38,6 +39,8 @@ corr = prices.corr()
 pairs = []
 filtered_pairs = []
 
+    if has_upcoming_result(s1) or has_upcoming_result(s2):
+        continue
 for s1, s2, corr in pairs:
     if SECTOR.get(s1) != SECTOR.get(s2):
         filtered_pairs.append([s1, s2, corr])
