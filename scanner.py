@@ -96,3 +96,41 @@ pd.DataFrame(
 ).to_csv("cointegrated_pairs.csv", index=False)
 
 print("\ncointegrated_pairs.csv created")
+import numpy as np
+
+print("\nCalculating Hedge Ratio...")
+
+hedge_pairs = []
+
+for s1, s2, corr, pvalue in good_pairs:
+
+    try:
+        beta = np.polyfit(
+            prices[s2],
+            prices[s1],
+            1
+        )[0]
+
+        hedge_pairs.append([
+            s1,
+            s2,
+            round(corr,4),
+            round(pvalue,6),
+            round(beta,4)
+        ])
+
+    except:
+        pass
+
+pd.DataFrame(
+    hedge_pairs,
+    columns=[
+        "Stock1",
+        "Stock2",
+        "Correlation",
+        "PValue",
+        "HedgeRatio"
+    ]
+).to_csv("hedge_pairs.csv", index=False)
+
+print("hedge_pairs.csv created")
