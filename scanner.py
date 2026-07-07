@@ -217,3 +217,51 @@ pd.DataFrame(
 ).to_csv("signal_pairs.csv", index=False)
 
 print("signal_pairs.csv created")
+print("\nRanking Pairs...")
+
+ranked = []
+
+for s1, s2, corr, pvalue, beta, z, signal in signals:
+
+    score = (
+        (corr * 50)
+        + ((1 - pvalue) * 30)
+        + (max(0, 2 - abs(z)) * 10)
+    )
+
+    ranked.append([
+        s1,
+        s2,
+        round(corr, 4),
+        round(pvalue, 6),
+        round(beta, 4),
+        round(z, 2),
+        signal,
+        round(score, 2)
+    ])
+
+ranked.sort(key=lambda x: x[7], reverse=True)
+
+import pandas as pd
+
+df = pd.DataFrame(
+    ranked,
+    columns=[
+        "Stock1",
+        "Stock2",
+        "Correlation",
+        "PValue",
+        "HedgeRatio",
+        "ZScore",
+        "Signal",
+        "Score"
+    ]
+)
+
+df.to_csv("final_pairs.csv", index=False)
+
+print("\nTop 10 Best Pairs\n")
+
+print(df.head(10))
+
+print("\nfinal_pairs.csv created")
