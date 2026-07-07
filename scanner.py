@@ -1,16 +1,32 @@
-from pathlib import Path
+import yfinance as yf
+import pandas as pd
 
 # Read F&O stock list
-stocks = []
+with open("fno_stocks.txt") as f:
+    stocks = [x.strip() for x in f if x.strip()]
 
-with open("fno_stocks.txt", "r") as f:
-    for line in f:
-        s = line.strip()
-        if s:
-            stocks.append(s)
-
-print("Total F&O Stocks:", len(stocks))
-print()
+prices = pd.DataFrame()
 
 for stock in stocks:
-    print(stock)
+    try:
+        print("Downloading:", stock)
+        data = yf.download(
+            stock,
+            period="1y",
+            interval="1d",
+            progress=False,
+            auto_adjust=True
+        )
+
+        if len(data) > 200:
+            prices[stock] = data["Close"]
+
+    except Exception as e:
+        print(stock, e)
+
+print()
+print("Stocks Downloaded:", len(prices.columns))
+
+prices.to_csv("prices.csv")
+
+print("prices.csv created successfully")
