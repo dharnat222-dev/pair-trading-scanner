@@ -3,5 +3,3 @@ pandas
 numpy
 scipy
 statsmodels
-requests
-openpyxl
