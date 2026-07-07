@@ -1,5 +1,6 @@
 import yfinance as yf
 import pandas as pd
+from sector_map import SECTOR
 from statsmodels.tsa.stattools import coint
 # Read F&O stock list
 with open("fno_stocks.txt") as f:
@@ -35,7 +36,15 @@ print("\nCalculating Correlation...")
 corr = prices.corr()
 
 pairs = []
+filtered_pairs = []
 
+for s1, s2, corr in pairs:
+    if SECTOR.get(s1) != SECTOR.get(s2):
+        filtered_pairs.append([s1, s2, corr])
+
+pairs = filtered_pairs
+
+print(f"Pairs after sector filter: {len(pairs)}")
 for i in range(len(corr.columns)):
     for j in range(i + 1, len(corr.columns)):
 
