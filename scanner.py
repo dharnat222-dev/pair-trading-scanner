@@ -169,3 +169,41 @@ pd.DataFrame(
 ).to_csv("zscore_pairs.csv", index=False)
 
 print("zscore_pairs.csv created")
+print("\nGenerating Trade Signals...")
+
+signals = []
+
+for s1, s2, corr, pvalue, beta, z in zscore_pairs:
+
+    signal = "NO TRADE"
+
+    if z >= 2:
+        signal = f"SELL {s1} | BUY {s2}"
+
+    elif z <= -2:
+        signal = f"BUY {s1} | SELL {s2}"
+
+    signals.append([
+        s1,
+        s2,
+        round(corr,4),
+        round(pvalue,6),
+        round(beta,4),
+        round(z,2),
+        signal
+    ])
+
+pd.DataFrame(
+    signals,
+    columns=[
+        "Stock1",
+        "Stock2",
+        "Correlation",
+        "PValue",
+        "HedgeRatio",
+        "ZScore",
+        "Signal"
+    ]
+).to_csv("signal_pairs.csv", index=False)
+
+print("signal_pairs.csv created")
