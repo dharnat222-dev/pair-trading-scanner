@@ -1,6 +1,6 @@
 import yfinance as yf
 import pandas as pd
-
+from statsmodels.tsa.stattools import coint
 # Read F&O stock list
 with open("fno_stocks.txt") as f:
     stocks = [x.strip() for x in f if x.strip()]
@@ -60,3 +60,39 @@ pd.DataFrame(
 ).to_csv("top_pairs.csv", index=False)
 
 print("\ntop_pairs.csv created")
+print("\nRunning Cointegration Test...\n")
+
+good_pairs = []
+
+for s1, s2, corr in pairs:
+
+    try:
+        score, pvalue, _ = coint(prices[s1], prices[s2])
+
+        if pvalue < 0.05:
+            good_pairs.append([
+                s1,
+                s2,
+                round(corr,4),
+                round(pvalue,6)
+            ])
+
+    except:
+        pass
+
+print("Cointegrated Pairs\n")
+
+for p in good_pairs[:30]:
+    print(p)
+
+pd.DataFrame(
+    good_pairs,
+    columns=[
+        "Stock1",
+        "Stock2",
+        "Correlation",
+        "PValue"
+    ]
+).to_csv("cointegrated_pairs.csv", index=False)
+
+print("\ncointegrated_pairs.csv created")
